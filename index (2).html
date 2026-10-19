@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Social DogTrail | Trailrun voor honden en baasjes in Gent</title>
+  <meta name="description" content="Social DogTrail is een niet-competitieve, sociale trailrun in en rond Gent voor honden en hun baasjes. Eerste editie: februari 2027.">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    /* Pas hier de kleuren van de huisstijl aan */
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            forest: { DEFAULT: '#2F5D46', dark: '#1F3F30', light: '#4A7A62' },
+            sand: { DEFAULT: '#F4EEE3', dark: '#E8DEC9' },
+            earth: '#A8643C',
+            ochre: { DEFAULT: '#E8A33D', dark: '#D18B22' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+
+    /* Zachte gloed op de achtergrond van de hero */
+    .topo {
+      background-image: radial-gradient(circle at 20% 20%, rgba(232,163,61,.18), transparent 40%),
+                        radial-gradient(circle at 85% 80%, rgba(168,100,60,.22), transparent 45%);
+    }
+
+    /* Scroll-animaties */
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.from-left { transform: translateX(-40px); }
+    .reveal.from-right { transform: translateX(40px); }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* Hero-animaties bij het laden */
+    @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+    .rise { opacity: 0; animation: rise .9s ease forwards; }
+    .d1 { animation-delay: .1s; } .d2 { animation-delay: .25s; } .d3 { animation-delay: .4s; } .d4 { animation-delay: .55s; }
+
+    /* Zwevend logo */
+    @keyframes float { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-14px) rotate(1deg); } }
+    .float { animation: float 6s ease-in-out infinite; }
+
+    /* Pulserende ring rond het logo */
+    @keyframes ring { 0% { transform: scale(.9); opacity: .7; } 100% { transform: scale(1.35); opacity: 0; } }
+    .ring { animation: ring 3.2s ease-out infinite; }
+    .ring.r2 { animation-delay: 1.6s; }
+
+    /* Pootafdrukken die over de hero lopen */
+    @keyframes pawwalk {
+      0% { opacity: 0; transform: translateY(8px) scale(.8); }
+      15% { opacity: .35; transform: translateY(0) scale(1); }
+      60% { opacity: .35; }
+      100% { opacity: 0; transform: translateY(0) scale(1); }
+    }
+    .paw { position: absolute; width: 28px; height: 28px; color: #E8A33D; opacity: 0; animation: pawwalk 7s ease-in-out infinite; }
+
+    /* Pad dat zichzelf tekent */
+    .trail-path { stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: draw 6s ease-out .5s forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+
+    /* Badge-stip en knoppen */
+    @keyframes wag { 0%,100% { transform: rotate(0); } 25% { transform: rotate(8deg); } 75% { transform: rotate(-8deg); } }
+    .btn-shine { position: relative; overflow: hidden; }
+    .btn-shine::after {
+      content: ""; position: absolute; top: 0; left: -75%; width: 50%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.45), transparent);
+      transform: skewX(-20deg); transition: left .7s ease;
+    }
+    .btn-shine:hover::after { left: 130%; }
+
+    .card-lift { transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
+    .card-lift:hover { transform: translateY(-8px); box-shadow: 0 18px 35px -12px rgba(0,0,0,.35); }
+    .icon-wag:hover svg { animation: wag .6s ease; }
+
+    /* Oneindig bewegende band */
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee { display: flex; width: max-content; animation: marquee 28s linear infinite; }
+
+    /* Toegankelijkheid: geen beweging als de gebruiker dat uitzet */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal, .rise { opacity: 1; transform: none; }
+      .trail-path { stroke-dashoffset: 0; }
+    }
+  </style>
+</head>
+<body class="font-sans bg-sand text-forest-dark antialiased">
+
+  <!-- Herbruikbare pictogrammen (lijnstijl, passend bij het logo) -->
+  <svg width="0" height="0" class="absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-paw" viewBox="0 0 24 24" fill="currentColor">
+        <ellipse cx="5.5" cy="11" rx="2.2" ry="2.8"/><ellipse cx="9.8" cy="6.2" rx="2.2" ry="2.9"/>
+        <ellipse cx="14.2" cy="6.2" rx="2.2" ry="2.9"/><ellipse cx="18.5" cy="11" rx="2.2" ry="2.8"/>
+        <path d="M12 12.2c-3 0-5.6 3.1-5.6 5.5 0 1.8 1.5 2.6 3 2.4 1-.1 1.6-.5 2.6-.5s1.6.4 2.6.5c1.5.2 3-.6 3-2.4 0-2.4-2.6-5.5-5.6-5.5z"/>
+      </symbol>
+      <symbol id="i-tree" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3l-5 7h3l-4 6h5v5h2v-5h5l-4-6h3z"/>
+      </symbol>
+      <symbol id="i-people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+        <circle cx="17.5" cy="9" r="2.4"/><path d="M16.5 14.2c2.9 0 4.9 2.1 4.9 5"/>
+      </symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>
+      </symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 21s7-5.6 7-11.2A7 7 0 0 0 5 9.8C5 15.4 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/>
+      </symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6.5L20.5 7"/>
+      </symbol>
+      <symbol id="i-instagram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".9" fill="currentColor" stroke="none"/>
+      </symbol>
+      <symbol id="i-facebook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 8.5h2.5V5H14a3.5 3.5 0 0 0-3.5 3.5V11H8v3.5h2.5V21H14v-6.5h2.3L17 11h-3V8.8c0-.2.1-.3.3-.3z"/>
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M13 6l6 6-6 6"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- NAVIGATIE -->
+  <header class="sticky top-0 z-50 bg-sand/90 backdrop-blur border-b border-sand-dark">
+    <nav class="max-w-6xl mx-auto flex items-center justify-between px-5 py-3">
+      <a href="#top" class="flex items-center gap-3 group">
+        <img src="logo.png" alt="Logo Social DogTrail" class="h-12 w-12 rounded-full object-cover transition-transform duration-500 group-hover:rotate-[360deg]">
+        <span class="font-extrabold text-lg tracking-tight">Social DogTrail</span>
+      </a>
+      <ul class="hidden md:flex items-center gap-8 text-sm font-semibold">
+        <li><a href="#verhaal" class="hover:text-earth transition">Ons verhaal</a></li>
+        <li><a href="#evenement" class="hover:text-earth transition">Het evenement</a></li>
+        <li><a href="#partners" class="hover:text-earth transition">Partners</a></li>
+        <li><a href="#contact" class="hover:text-earth transition">Contact</a></li>
+      </ul>
+      <a href="#inschrijven" class="btn-shine rounded-full bg-ochre hover:bg-ochre-dark text-forest-dark font-bold text-sm px-5 py-2.5 transition">Hou me op de hoogte</a>
+    </nav>
+  </header>
+
+  <main id="top">
+
+    <!-- HERO -->
+    <section class="topo relative overflow-hidden bg-forest text-sand">
+
+      <!-- Pad dat zichzelf tekent -->
+      <svg class="absolute inset-0 w-full h-full opacity-25 pointer-events-none" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
+        <path class="trail-path" d="M-20 520 C 150 420, 260 560, 420 470 S 700 330, 820 420 S 1050 560, 1230 380" fill="none" stroke="#E8A33D" stroke-width="3" stroke-linecap="round" stroke-dasharray="1400" />
+      </svg>
+
+      <!-- Pootafdrukken -->
+      <svg class="paw" style="left:6%;  top:74%; animation-delay:0s;"  aria-hidden="true"><use href="#i-paw"/></svg>
+      <svg class="paw" style="left:14%; top:62%; animation-delay:1s; transform:rotate(15deg)"  aria-hidden="true"><use href="#i-paw"/></svg>
+      <svg class="paw" style="left:23%; top:70%; animation-delay:2s;"  aria-hidden="true"><use href="#i-paw"/></svg>
+      <svg class="paw" style="left:32%; top:58%; animation-delay:3s; transform:rotate(-10deg)" aria-hidden="true"><use href="#i-paw"/></svg>
+      <svg class="paw" style="left:41%; top:66%; animation-delay:4s;"  aria-hidden="true"><use href="#i-paw"/></svg>
+
+      <div class="relative max-w-6xl mx-auto px-5 py-20 md:py-28 grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <span class="rise d1 inline-flex items-center gap-2 rounded-full bg-ochre/20 border border-ochre/50 text-ochre px-4 py-1.5 text-sm font-semibold">
+            <span class="h-2 w-2 rounded-full bg-ochre animate-pulse"></span>
+            Eerste editie: Februari 2027 • Gent
+          </span>
+          <h1 class="rise d2 mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
+            Samen het bos in.<br><span class="text-ochre">Op vier poten en twee benen.</span>
+          </h1>
+          <p class="rise d3 mt-6 text-lg text-sand/85 max-w-xl">
+            Social DogTrail is de niet-competitieve trailrun in en rond Gent voor honden en hun baasjes. Geen klok, geen podium, wel modder, frisse lucht en kwispelende staarten.
+          </p>
+
+          <!-- Inschrijfformulier (hero) -->
+          <div class="rise d4">
+            <form class="signup mt-8 flex flex-col sm:flex-row gap-3 max-w-xl" novalidate>
+              <label for="email-hero" class="sr-only">E-mailadres</label>
+              <input id="email-hero" type="email" required placeholder="jouw@emailadres.be"
+                class="flex-1 rounded-full px-6 py-4 text-forest-dark placeholder-forest/50 focus:outline-none focus:ring-4 focus:ring-ochre/60 transition">
+              <button type="submit" class="btn-shine rounded-full bg-ochre hover:bg-ochre-dark text-forest-dark font-extrabold px-8 py-4 transition shadow-lg hover:-translate-y-0.5">
+                Verwittig mij
+              </button>
+            </form>
+            <p class="form-msg mt-3 text-sm min-h-[1.25rem]" aria-live="polite"></p>
+            <p class="text-xs text-sand/60">Geen spam. Enkel een mail zodra de inschrijvingen openen.</p>
+          </div>
+        </div>
+
+        <!-- Logo met pulserende ringen -->
+        <div class="flex justify-center rise d3">
+          <div class="relative">
+            <span class="ring absolute inset-0 rounded-full border-2 border-ochre"></span>
+            <span class="ring r2 absolute inset-0 rounded-full border-2 border-ochre"></span>
+            <div class="absolute -inset-4 rounded-full bg-ochre/20 blur-2xl"></div>
+            <img src="logo.png" alt="Social DogTrail: een hond en baasje op een bospad"
+              class="float relative h-72 w-72 sm:h-96 sm:w-96 rounded-full object-cover border-8 border-sand shadow-2xl">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOPENDE BAND -->
+    <section class="bg-ochre text-forest-dark overflow-hidden py-3" aria-hidden="true">
+      <div class="marquee font-extrabold uppercase tracking-widest text-sm">
+        <span class="flex items-center gap-6 pr-6 whitespace-nowrap">
+          <span>Niet-competitief</span><svg class="h-4 w-4"><use href="#i-paw"/></svg>
+          <span>Honden welkom</span><svg class="h-4 w-4"><use href="#i-paw"/></svg>
+          <span>Gent • Februari 2027</span><svg class="h-4 w-4"><use href="#i-paw"/></svg>
+          <span>Samen bewegen</span><svg class="h-4 w-4"><use href="#i-paw"/></svg>
+          <span>Natuur</span><svg class="h-4 w-4"><use href="#i-paw"/></svg>
+        </span>
+        <span class="flex items-center gap-6 pr-6 whitespace-nowrap">
+          <span>Niet-competitief</span><svg class="h-4 w-4"><use href="#i-paw"/></svg>
+          <span>Honden welkom</span><svg class="h-4 w-4"><use href="#i-paw"/></svg>
+          <span>Gent • Februari 2027</span><svg class="h-4 w-4"><use href="#i-paw"/></svg>
+          <span>Samen bewegen</span><svg class="h-4 w-4"><use href="#i-paw"/></svg>
+          <span>Natuur</span><svg class="h-4 w-4"><use href="#i-paw"/></svg>
+        </span>
+      </div>
+    </section>
+
+    <!-- CIJFERS -->
+    <section class="bg-sand-dark">
+      <div class="max-w-6xl mx-auto px-5 py-10 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div class="reveal"><p class="text-4xl font-extrabold text-earth"><span class="count" data-to="1">0</span>e</p><p class="text-sm font-semibold">Editie</p></div>
+        <div class="reveal" style="transition-delay:.1s"><p class="text-4xl font-extrabold text-earth"><span class="count" data-to="2027">0</span></p><p class="text-sm font-semibold">Februari in Gent</p></div>
+        <div class="reveal" style="transition-delay:.2s"><p class="text-4xl font-extrabold text-earth"><span class="count" data-to="0">0</span></p><p class="text-sm font-semibold">Tijdsregistraties</p></div>
+        <div class="reveal" style="transition-delay:.3s"><p class="text-4xl font-extrabold text-earth"><span class="count" data-to="100">0</span>%</p><p class="text-sm font-semibold">Plezier voor mens en dier</p></div>
+      </div>
+    </section>
+
+    <!-- ONS VERHAAL -->
+    <section id="verhaal" class="max-w-6xl mx-auto px-5 py-20 grid md:grid-cols-5 gap-12 items-start">
+      <div class="md:col-span-2 reveal from-left">
+        <p class="text-earth font-bold uppercase tracking-widest text-sm">Ons verhaal</p>
+        <h2 class="mt-3 text-3xl md:text-4xl font-extrabold leading-tight">Het idee achter Social DogTrail</h2>
+        <svg class="mt-6 h-10 w-10 text-ochre" aria-hidden="true"><use href="#i-paw"/></svg>
+      </div>
+      <div class="md:col-span-3 space-y-5 text-lg text-forest-dark/85 reveal from-right">
+        <p>Wij zijn een groep studenten met een gedeelde passie: honden, natuur en samen bewegen. Tijdens onze eigen wandel- en looprondes merkten we hoe vaak een hond de beste looppartner is, en hoe weinig evenementen er zijn waar je die ervaring echt samen kunt delen.</p>
+        <p>Daarom bouwen we Social DogTrail. Een trailrun waar de hond niet meeloopt, maar de hoofdrol speelt. Waar je andere baasjes leert kennen, je hond zich mag uitleven en niemand zich zorgen hoeft te maken over tijd of tempo.</p>
+        <p class="font-semibold text-forest">Beweging, buitenlucht en verbinding. Meer hebben we niet nodig.</p>
+      </div>
+    </section>
+
+    <!-- HET EVENEMENT -->
+    <section id="evenement" class="bg-forest text-sand">
+      <div class="max-w-6xl mx-auto px-5 py-20">
+        <div class="max-w-2xl reveal">
+          <p class="text-ochre font-bold uppercase tracking-widest text-sm">Het evenement</p>
+          <h2 class="mt-3 text-3xl md:text-4xl font-extrabold leading-tight">Plezier boven prestatie</h2>
+          <p class="mt-4 text-lg text-sand/85">Social DogTrail is geen wedstrijd. Je loopt, wandelt of stapt in je eigen tempo, altijd samen met je hond. Dit mag je verwachten:</p>
+        </div>
+
+        <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <article class="reveal card-lift icon-wag rounded-2xl bg-forest-light/40 border border-sand/10 hover:border-ochre/60 p-6">
+            <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-ochre/15 text-ochre"><svg class="h-7 w-7"><use href="#i-tree"/></svg></span>
+            <h3 class="mt-4 font-bold text-lg">Natuurlijk parcours</h3>
+            <p class="mt-2 text-sand/80 text-sm">Boswegen, zandpaden en groene stukken in en rond Gent, geschikt voor beginners en gevorderden.</p>
+          </article>
+          <article class="reveal card-lift icon-wag rounded-2xl bg-forest-light/40 border border-sand/10 hover:border-ochre/60 p-6" style="transition-delay:.1s">
+            <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-ochre/15 text-ochre"><svg class="h-7 w-7"><use href="#i-paw"/></svg></span>
+            <h3 class="mt-4 font-bold text-lg">Voor elke hond</h3>
+            <p class="mt-2 text-sand/80 text-sm">Grote en kleine viervoeters zijn welkom. Je kiest zelf het tempo dat bij jullie past.</p>
+          </article>
+          <article class="reveal card-lift icon-wag rounded-2xl bg-forest-light/40 border border-sand/10 hover:border-ochre/60 p-6" style="transition-delay:.2s">
+            <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-ochre/15 text-ochre"><svg class="h-7 w-7"><use href="#i-people"/></svg></span>
+            <h3 class="mt-4 font-bold text-lg">Sociale sfeer</h3>
+            <p class="mt-2 text-sand/80 text-sm">Geen klassement, wel ontmoetingen. Een evenement om nieuwe mensen en honden te leren kennen.</p>
+          </article>
+          <article class="reveal card-lift icon-wag rounded-2xl bg-forest-light/40 border border-sand/10 hover:border-ochre/60 p-6" style="transition-delay:.3s">
+            <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-ochre/15 text-ochre"><svg class="h-7 w-7"><use href="#i-flag"/></svg></span>
+            <h3 class="mt-4 font-bold text-lg">Fijne afsluiter</h3>
+            <p class="mt-2 text-sand/80 text-sm">Na de trail is er tijd om na te praten en bij te komen. Meer details volgen binnenkort.</p>
+          </article>
+        </div>
+
+        <div class="reveal mt-12 rounded-2xl bg-ochre text-forest-dark p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-4 justify-between">
+          <div class="flex items-start gap-4">
+            <svg class="h-9 w-9 shrink-0 mt-0.5"><use href="#i-pin"/></svg>
+            <div>
+              <p class="font-extrabold text-xl">Exacte locatie: binnenkort bekend</p>
+              <p class="mt-1 text-forest-dark/80">We zoeken de mooiste plek in en rond Gent. Schrijf je in op de lijst en je hoort het als eerste.</p>
+            </div>
+          </div>
+          <a href="#inschrijven" class="btn-shine shrink-0 rounded-full bg-forest text-sand font-bold px-6 py-3 hover:bg-forest-dark transition text-center">Houd me op de hoogte</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSCHRIJVEN (tweede CTA) -->
+    <section id="inschrijven" class="max-w-3xl mx-auto px-5 py-20 text-center reveal">
+      <img src="logo.png" alt="" class="mx-auto h-20 w-20 rounded-full object-cover float">
+      <h2 class="mt-6 text-3xl md:text-4xl font-extrabold">Als eerste op de startlijn</h2>
+      <p class="mt-4 text-lg text-forest-dark/80">Laat je e-mailadres achter en we sturen je een bericht zodra de inschrijvingen openen voor de eerste editie in februari 2027.</p>
+      <form class="signup mt-8 flex flex-col sm:flex-row gap-3 max-w-xl mx-auto" novalidate>
+        <label for="email-cta" class="sr-only">E-mailadres</label>
+        <input id="email-cta" type="email" required placeholder="jouw@emailadres.be"
+          class="flex-1 rounded-full px-6 py-4 bg-white border border-sand-dark focus:outline-none focus:ring-4 focus:ring-ochre/60 transition">
+        <button type="submit" class="btn-shine rounded-full bg-forest hover:bg-forest-dark text-sand font-extrabold px-8 py-4 transition hover:-translate-y-0.5">Schrijf me in op de lijst</button>
+      </form>
+      <p class="form-msg mt-3 text-sm min-h-[1.25rem]" aria-live="polite"></p>
+    </section>
+
+    <!-- PARTNERS & SPONSOREN -->
+    <section id="partners" class="bg-sand-dark">
+      <div class="max-w-6xl mx-auto px-5 py-20">
+        <div class="text-center max-w-2xl mx-auto reveal">
+          <p class="text-earth font-bold uppercase tracking-widest text-sm">Partners & sponsoren</p>
+          <h2 class="mt-3 text-3xl md:text-4xl font-extrabold">Samen maken we het mogelijk</h2>
+          <p class="mt-4 text-forest-dark/80">Ben je een lokale ondernemer, dierenwinkel, sportmerk of organisatie met hart voor honden en natuur? We horen graag van je.</p>
+        </div>
+        <!-- Vervang de vakken door <img src="partner.png" alt="Naam partner"> zodra partners bekend zijn -->
+        <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-5">
+          <div class="reveal card-lift h-28 rounded-2xl border-2 border-dashed border-forest/30 hover:border-earth flex items-center justify-center text-forest/50 font-semibold text-sm">Jouw logo hier</div>
+          <div class="reveal card-lift h-28 rounded-2xl border-2 border-dashed border-forest/30 hover:border-earth flex items-center justify-center text-forest/50 font-semibold text-sm" style="transition-delay:.1s">Jouw logo hier</div>
+          <div class="reveal card-lift h-28 rounded-2xl border-2 border-dashed border-forest/30 hover:border-earth flex items-center justify-center text-forest/50 font-semibold text-sm" style="transition-delay:.2s">Jouw logo hier</div>
+          <div class="reveal card-lift h-28 rounded-2xl border-2 border-dashed border-forest/30 hover:border-earth flex items-center justify-center text-forest/50 font-semibold text-sm" style="transition-delay:.3s">Jouw logo hier</div>
+        </div>
+        <div class="mt-10 text-center reveal">
+          <a href="mailto:info@socialdogtrail.be?subject=Partnership%20Social%20DogTrail" class="btn-shine inline-flex items-center gap-2 rounded-full bg-earth hover:opacity-90 text-white font-bold px-8 py-3 transition">
+            Word partner <svg class="h-5 w-5"><use href="#i-arrow"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT / SOCIALS -->
+    <section id="contact" class="max-w-6xl mx-auto px-5 py-20 grid md:grid-cols-2 gap-12 items-center">
+      <div class="reveal from-left">
+        <p class="text-earth font-bold uppercase tracking-widest text-sm">Contact</p>
+        <h2 class="mt-3 text-3xl md:text-4xl font-extrabold">Vragen of ideeën?</h2>
+        <p class="mt-4 text-lg text-forest-dark/80">Stuur ons gerust een bericht of volg ons op sociale media voor nieuws achter de schermen.</p>
+      </div>
+      <div class="space-y-4 reveal from-right">
+        <a href="mailto:info@socialdogtrail.be" class="card-lift group flex items-center gap-4 rounded-2xl bg-white p-5 border border-sand-dark hover:border-ochre">
+          <span class="flex h-12 w-12 items-center justify-center rounded-full bg-forest text-sand group-hover:bg-ochre group-hover:text-forest-dark transition"><svg class="h-6 w-6"><use href="#i-mail"/></svg></span>
+          <span><span class="block font-bold">E-mail</span><span class="text-forest-dark/70 text-sm">info@socialdogtrail.be</span></span>
+        </a>
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="card-lift group flex items-center gap-4 rounded-2xl bg-white p-5 border border-sand-dark hover:border-ochre">
+          <span class="flex h-12 w-12 items-center justify-center rounded-full bg-forest text-sand group-hover:bg-ochre group-hover:text-forest-dark transition"><svg class="h-6 w-6"><use href="#i-instagram"/></svg></span>
+          <span><span class="block font-bold">Instagram</span><span class="text-forest-dark/70 text-sm">@socialdogtrail</span></span>
+        </a>
+        <a href="https://www.facebook.com/" target="_blank" rel="noopener" class="card-lift group flex items-center gap-4 rounded-2xl bg-white p-5 border border-sand-dark hover:border-ochre">
+          <span class="flex h-12 w-12 items-center justify-center rounded-full bg-forest text-sand group-hover:bg-ochre group-hover:text-forest-dark transition"><svg class="h-6 w-6"><use href="#i-facebook"/></svg></span>
+          <span><span class="block font-bold">Facebook</span><span class="text-forest-dark/70 text-sm">Social DogTrail</span></span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-forest-dark text-sand/80">
+    <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+      <div class="flex items-center gap-3">
+        <img src="logo.png" alt="" class="h-10 w-10 rounded-full object-cover">
+        <p>&copy; <span id="year">2026</span> Social DogTrail. Alle rechten voorbehouden.</p>
+      </div>
+      <p class="inline-flex items-center gap-2 font-semibold text-ochre"><span class="h-2 w-2 rounded-full bg-ochre animate-pulse"></span>Coming soon</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* Elementen laten verschijnen bij het scrollen */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    /* Cijfers laten optellen */
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseInt(el.dataset.to, 10);
+        const duration = 1400;
+        const start = performance.now();
+        function tick(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(target * eased);
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        countObserver.unobserve(el);
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('.count').forEach(el => countObserver.observe(el));
+
+    /* Inschrijfformulieren (hero + onderaan) */
+    document.querySelectorAll('form.signup').forEach(function (form) {
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const input = form.querySelector('input[type="email"]');
+        const msg = form.parentElement.querySelector('.form-msg');
+        const email = input.value.trim();
+        const valid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+
+        if (!valid) {
+          msg.textContent = 'Vul een geldig e-mailadres in.';
+          msg.className = 'form-msg mt-3 text-sm min-h-[1.25rem] text-ochre font-semibold';
+          return;
+        }
+
+        try {
+          /* KOPPELING: vervang de URL door je eigen formulierdienst (bv. Formspree, Mailchimp of Google Forms)
+             await fetch('https://formspree.io/f/JOUW_ID', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+               body: JSON.stringify({ email: email })
+             });
+          */
+          msg.textContent = 'Top! Je staat op de lijst. We laten snel van ons horen.';
+          msg.className = 'form-msg mt-3 text-sm min-h-[1.25rem] text-ochre font-semibold';
+          form.reset();
+        } catch (err) {
+          msg.textContent = 'Er ging iets mis. Probeer het later opnieuw.';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
