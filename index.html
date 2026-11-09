@@ -411,10 +411,11 @@
     }, { threshold: 0.6 });
     document.querySelectorAll('.count').forEach(el => countObserver.observe(el));
 
-    /* Inschrijfformulieren (hero + onderaan) */
+        /* Inschrijfformulieren (hero + onderaan) */
     document.querySelectorAll('form.signup').forEach(function (form) {
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
+
         const input = form.querySelector('input[type="email"]');
         const msg = form.parentElement.querySelector('.form-msg');
         const email = input.value.trim();
@@ -427,7 +428,7 @@
         }
 
         try {
-                 const response = await fetch('https://formspree.io/f/xeaabgqv', {
+          const response = await fetch('https://formspree.io/f/xeaabgqv', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -443,6 +444,13 @@
           msg.textContent = 'Top! Je staat op de lijst. We laten snel van ons horen.';
           msg.className = 'form-msg mt-3 text-sm min-h-[1.25rem] text-ochre font-semibold';
           form.reset();
+
         } catch (err) {
           msg.textContent = 'Er ging iets mis. Probeer het later opnieuw.';
+          msg.className = 'form-msg mt-3 text-sm min-h-[1.25rem] text-red-600 font-semibold';
         }
+      });
+    });
+  </script>
+</body>
+</html>
