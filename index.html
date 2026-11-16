@@ -92,6 +92,27 @@
       .reveal, .rise { opacity: 1; transform: none; }
       .trail-path { stroke-dashoffset: 0; }
     }
+ 
+/* Achtergrond van Het evenement */
+.event-background {
+  background-image:
+    linear-gradient(rgba(31,63,48,0.84), rgba(31,63,48,0.84)),
+    url('DDOJ9653%5B1%5D.JPG');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Verticale achtergrond op gsm */
+@media (max-width: 767px) {
+  .event-background {
+    background-image:
+      linear-gradient(rgba(31,63,48,0.84), rgba(31,63,48,0.84)),
+      url('WhatsApp%20Image%202026-11-13%20at%2019.35.01.jpeg');
+    background-size: cover;
+    background-position: center;
+  }
+}
   </style>
 </head>
 <body class="font-sans bg-sand text-forest-dark antialiased">
@@ -281,8 +302,7 @@
 
     <!-- HET EVENEMENT -->
    
-<section id="evenement" class="text-sand"
-  style="background-image: linear-gradient(rgba(31,63,48,0.84), rgba(31,63,48,0.84)), url('DDOJ9653%5B1%5D.JPG'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<section id="evenement" class="event-background text-sand">
       <div class="max-w-6xl mx-auto px-5 py-20">
         <div class="max-w-2xl reveal">
           <p class="text-ochre font-bold uppercase tracking-widest text-sm">Het evenement</p>
